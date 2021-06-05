@@ -31,7 +31,41 @@ const getDetail = (id) =>{
     }
 }
 
+//mock,新建博客
+const newBlog = (blogData ={}) =>{
+    //blogData是一个博客对象
+    console.log('newBlog blogData...', blogData)
+
+    return {
+        id:3
+    }
+
+}
+
+//mock,更新博客，通过id+博客内容
+//blogData ={}万一，blogData为空也ok,ES6写法
+const updateBlog = (id, blogData ={}) =>{
+    //id就是要更新博客的id
+    //blogData是一个博客对象
+    console.log('updateBlog...', id, blogData)
+    return true
+
+}
+
+//mock,delblog删除博客,只需要id
+const delBlog = (id)=>{
+    //id就要删除博客的id
+    return true
+}
+
+
+
+
 module.exports = {
     getList,
     getDetail,
+    newBlog,
+    updateBlog,
+    delBlog,
+
 }
