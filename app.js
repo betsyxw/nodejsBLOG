@@ -5,6 +5,10 @@ const serverHandle = (req,res)=>{
   //设置返回格式，JSON,后端提供的数据肯定是json格式的，restful开发
   res.setHeader('Content-type','application/json')
 
+  //抽取公共类
+  const url = req.url;
+  req.path = url.split('?')[0]
+
   //处理blog文件的路由
   const blogData = handleBlogRouter(req,res)
   if(blogData){
