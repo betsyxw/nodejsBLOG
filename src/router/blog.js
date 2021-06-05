@@ -28,7 +28,7 @@ const handleBlogRouter = (req,res) =>{
         }
     }
     //接口5:删除一篇博客接口
-    if(method ==='POST' && path === 'api/blog/del'){
+    if(method ==='POST' && path === '/api/blog/del'){
         return {
             msg:'this is 删除一篇博客接口'
         }

@@ -15,10 +15,10 @@ const serverHandle = (req,res)=>{
   }
 
   //处理User路由
-  const UserData = handleUserRouter(req,res)
-  if(UserData){
+  const userData = handleUserRouter(req,res)
+  if(userData){
     res.end(
-      JSON.stringify(UserData)
+      JSON.stringify(userData)
       )
       return
   }
