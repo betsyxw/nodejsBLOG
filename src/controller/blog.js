@@ -1,3 +1,5 @@
+
+//mock数据，博客list
 const getList = (author,keyword) =>{
     //先返回mock数据，但是格式要正确
     return [
@@ -17,6 +19,19 @@ const getList = (author,keyword) =>{
     ]
 }
 
+//mock数据，博客详情detail页面
+const getDetail = (id) =>{
+
+    return {
+        id:1,
+        title:'bootstrap的UI框架',
+        content: '世界で一番人気のあるフロントエンドライブラリ Bootstrap を使って' ,
+        createTime:1622878280218,
+        author:"徐闻"
+    }
+}
+
 module.exports = {
-    getList
+    getList,
+    getDetail,
 }
