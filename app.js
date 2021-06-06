@@ -67,12 +67,19 @@ const serverHandle = (req,res)=>{
 
 
     //处理User路由
-    const userData = handleUserRouter(req,res)
-    if(userData){
-      res.end(
-        JSON.stringify(userData)
-        )
-        return
+    // const userData = handleUserRouter(req,res)
+    // if(userData){
+    //   res.end(
+    //     JSON.stringify(userData)
+    //     )
+    //     return
+    // }
+    const userResult = handleUserRouter(req,res)
+    if(userResult){
+      userResult.then(userData =>{
+        res.end(JSON.stringify(userData))
+      })
+      return
     }
 
     //路由一个都没有命中，返回404,还需要修改type

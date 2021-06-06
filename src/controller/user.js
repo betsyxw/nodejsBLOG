@@ -1,15 +1,15 @@
+const {exec, escape } = require('../db/mysql')
 
+//escape方式SQL注入
 const loginCheck = (username,password)=>{
-    //mock假数据
-    if(username === 'zhangsan' && password ==='123'){
-        return true
-    }
-    return false
-
+    username = escape(username)
+    password = escape(password)
+    const sql = `SELECT username,realname FROM users WHERE username=${username} and password=${password}`
+    return exec(sql).then(rows =>{
+        return rows[0] || {}
+    })
 }
 
-
-//mock
 
 
 module.exports = {
