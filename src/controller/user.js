@@ -1,7 +1,7 @@
 const {exec, escape } = require('../db/mysql')
 
 //escape方式SQL注入
-const loginCheck = (username,password)=>{
+const login = (username,password)=>{
     username = escape(username)
     password = escape(password)
     const sql = `SELECT username,realname FROM users WHERE username=${username} and password=${password}`
@@ -13,7 +13,7 @@ const loginCheck = (username,password)=>{
 
 
 module.exports = {
-    loginCheck,
+    login,
 }
 
 

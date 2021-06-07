@@ -69,18 +69,24 @@ const serverHandle = (req,res)=>{
 
 
   //解析session
+  //有userid不需要设置session，needSetCookie
   let needSetCookie = false
   let userId = req.cookie.userid
+  console.log('第一层：userid=>',userId)
   if(userId){
     if(!SESSION_DATA[userId]){
       SESSION_DATA[userId] ={}
     }
   }else{
     needSetCookie = true
+    //如果没有获取的到userId就给个时间磋，赋值
     userId = `${Date.now()}_${Math.random()}`
     SESSION_DATA[userId] = {}
+    console.log('session第二层：userid=>',userId)
   }
   req.session = SESSION_DATA[userId]
+  console.log('session第三层：userid:=>',userId)
+  console.log('needSetCookie:is=>',needSetCookie)
 
 
 
@@ -102,10 +108,10 @@ const serverHandle = (req,res)=>{
     const blogResult = handleBlogRouter(req,res)
     if(blogResult){
       blogResult.then(blogData =>{
-        //session--不行就删除--bug
-        // if(needSetCookie){
-        //   res.setHeader('Set-Cookie',`userid=${useId}; path=/; httpOnly; expires=${getCookieExpires()}`)
-        // }
+        //session--
+        if(needSetCookie){
+          res.setHeader('Set-Cookie',`userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`)
+        }
 
         res.end(
           JSON.stringify(blogData)
@@ -126,10 +132,10 @@ const serverHandle = (req,res)=>{
     const userResult = handleUserRouter(req,res)
     if(userResult){
       userResult.then(userData =>{
-        //session--不行就删除--bug
-        // if(needSetCookie){
-        //   res.setHeader('Set-Cookie',`userid=${useId}; path=/; httpOnly; expires=${getCookieExpires()}`)
-        // }
+        //session--,如果需要设置cookie，在这里把cookie，set上
+        if(needSetCookie){
+          res.setHeader('Set-Cookie',`userid=${userId}; path=/; httpOnly; expires=${getCookieExpires()}`)
+        }
 
         res.end(JSON.stringify(userData))
       })
