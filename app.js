@@ -1,7 +1,7 @@
 const handleBlogRouter = require('./src/router/blog')
 const handleUserRouter = require('./src/router/user')
 const querystring = require('querystring')
-
+const {get, set} = require('./src/db/redis')
 //获取cookie的过期时间
 const getCookieExpires = () =>{
   const d = new Date()
@@ -11,7 +11,7 @@ const getCookieExpires = () =>{
 }
 
 //session数据
-const SESSION_DATA = {}
+// const SESSION_DATA = {}
 
 
 //用于处理postdata,这里=js的callback，用原生自带promise函数.then
@@ -70,29 +70,50 @@ const serverHandle = (req,res)=>{
 
   //解析session
   //有userid不需要设置session，needSetCookie
+  // let needSetCookie = false
+  // let userId = req.cookie.userid
+  // console.log('第一层：userid=>',userId)
+  // if(userId){
+  //   if(!SESSION_DATA[userId]){
+  //     SESSION_DATA[userId] ={}
+  //   }
+  // }else{
+  //   needSetCookie = true
+  //   //如果没有获取的到userId就给个时间磋，赋值
+  //   userId = `${Date.now()}_${Math.random()}`
+  //   SESSION_DATA[userId] = {}
+  //   console.log('session第二层：userid=>',userId)
+  // }
+  // req.session = SESSION_DATA[userId]
+  // console.log('session第三层：userid:=>',userId)
+  // console.log('needSetCookie:is=>',needSetCookie)
+
+  //redis=>解析session，最后存入redis
   let needSetCookie = false
   let userId = req.cookie.userid
-  console.log('第一层：userid=>',userId)
-  if(userId){
-    if(!SESSION_DATA[userId]){
-      SESSION_DATA[userId] ={}
-    }
-  }else{
+  if(!userId){
     needSetCookie = true
-    //如果没有获取的到userId就给个时间磋，赋值
     userId = `${Date.now()}_${Math.random()}`
-    SESSION_DATA[userId] = {}
-    console.log('session第二层：userid=>',userId)
+    //初始化redis 中session值
+    set(userId,{})
   }
-  req.session = SESSION_DATA[userId]
-  console.log('session第三层：userid:=>',userId)
-  console.log('needSetCookie:is=>',needSetCookie)
-
-
-
-
+  //获取session
+  req.sessionId = userId
+  get(req.sessionId).then(sessionData =>{
+    if(sessionData == null){
+      //初始化redis 中session值
+      set(req.sessionId, {})
+      //设置session
+      req.session = {}
+    }else{
+      req.session = sessionData
+    }
+    console.log('res.session=>',req.session)
+    //处理post data
+    return getPostData(req)
+  })
   //处理路由之前，先解析post data
-  getPostData(req).then(postData =>{
+.then(postData =>{
     req.body = postData
       //处理blog文件的路由
       //方法一：

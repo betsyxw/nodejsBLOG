@@ -7,6 +7,14 @@ const handleBlogRouter = (req,res) =>{
     // const url = req.url;
     // const path = url.split('?')[0]
 
+    //统一的登陆验证函数,特别是更新博客，发布博客，删除博客，第一步判断用户是否登陆
+    const loginCheck = (req) =>{
+        if(!req.session.username){
+            return Promise.resolve(new ErrorModel('尚未登陆!!!'))
+        }
+        
+    }
+
     //接口1:获取博客list
     if(method === 'GET' && req.path ==='/api/blog/list'){
         const author = req.query.author || ''
@@ -37,7 +45,13 @@ const handleBlogRouter = (req,res) =>{
         // return {
         //     msg:'这是新建一篇博客的接口'
         // }
-        req.body.author = 'zhangsan'//更新博客是登陆状态,假数据，等待后续开发
+        const loginCheckResult = loginCheck(req)
+        if(loginCheckResult){
+            //返回有值，=未登陆
+            return loginCheck
+        }
+        req.body.author = req.session.username
+        //'zhangsan'//更新博客是登陆状态,假数据，等待后续开发
         const result = newBlog(req.body)
         return result.then(data =>{
             return new SuccessModel(data)
@@ -46,6 +60,11 @@ const handleBlogRouter = (req,res) =>{
     }
     //接口4:更新一篇博客接口=>id,body
     if(method ==='POST' && req.path === '/api/blog/update'){
+        const loginCheckResult = loginCheck(req)
+        if(loginCheckResult){
+            //返回有值，=未登陆
+            return loginCheck
+        }
         //通过id，更新
         const result = updateBlog(id ,req.body)
         return result.then(val =>{
@@ -58,7 +77,13 @@ const handleBlogRouter = (req,res) =>{
     }
     //接口5:删除一篇博客接口=>id+author
     if(method ==='POST' && req.path === '/api/blog/del'){
-        const author = 'zhangsan'//更新博客是登陆状态,假数据，等待后续开发
+        const loginCheckResult = loginCheck(req)
+        if(loginCheckResult){
+            //返回有值，=未登陆
+            return loginCheck
+        }
+        const author = req.session.username
+        //'zhangsan'//更新博客是登陆状态,假数据，等待后续开发
         const result = delBlog(id,author)
         return result.then(val =>{
             if(val){
