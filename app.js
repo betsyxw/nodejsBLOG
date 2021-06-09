@@ -2,6 +2,7 @@ const handleBlogRouter = require('./src/router/blog')
 const handleUserRouter = require('./src/router/user')
 const querystring = require('querystring')
 const {get, set} = require('./src/db/redis')
+const {access} = require('./src/utils/log')
 //获取cookie的过期时间
 const getCookieExpires = () =>{
   const d = new Date()
@@ -43,6 +44,8 @@ const getPostData = (req) => {
 
 
 const serverHandle = (req,res)=>{
+  //记录accesslog
+  access(`${req.method} -- ${req.url} -- ${req.headers['user-agent']} -- ${Date.now()}`)
   //设置返回格式，JSON,后端提供的数据肯定是json格式的，restful开发
   res.setHeader('Content-type','application/json')
 
